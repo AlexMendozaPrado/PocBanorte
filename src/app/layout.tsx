@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import ThemeProvider from "./components/ThemeProvider";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "DocuMind - Análisis de Documentos PDF",
@@ -17,10 +14,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={inter.className}>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
+      <body className="bg-primary text-textPrimary font-sans">
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
