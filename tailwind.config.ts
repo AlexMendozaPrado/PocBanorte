@@ -1,9 +1,11 @@
 import type { Config } from "tailwindcss";
-import forms from "@tailwindcss/forms";
-import containerQueries from "@tailwindcss/container-queries";
 
 const config: Config = {
-  content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
+  content: [
+    "./src/app/**/*.{ts,tsx}",
+    "./src/components/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}"
+  ],
   theme: {
     extend: {
       colors: {
@@ -22,7 +24,9 @@ const config: Config = {
       },
     },
   },
-  plugins: [forms, containerQueries],
+  plugins: [
+    require("@tailwindcss/forms"),
+  ],
 };
 
 export default config;

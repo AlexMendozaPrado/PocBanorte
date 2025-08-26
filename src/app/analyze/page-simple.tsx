@@ -50,7 +50,7 @@ export default function AnalyzePage() {
     <Box sx={{ minHeight: "100vh", backgroundColor: "#121212", p: 4 }}>
       <Container maxWidth="lg">
         <Typography variant="h3" color="white" gutterBottom>
-          DocuMind - Análisis de Documentos
+          Banorte - Análisis de Documentos
         </Typography>
 
         {/* Error Alert */}

@@ -1,8 +1,18 @@
+import { LoadingProgress, KeywordsSkeleton, LoadingStage } from "./LoadingStates";
+
 interface KeywordPanelProps {
   keywords: string[];
+  isLoading?: boolean;
+  loadingStage?: LoadingStage;
+  progress?: number;
 }
 
-export default function KeywordPanel({ keywords }: KeywordPanelProps) {
+export default function KeywordPanel({
+  keywords,
+  isLoading = false,
+  loadingStage = 'analyzing',
+  progress
+}: KeywordPanelProps) {
   const hasKeywords = keywords.length > 0;
   const defaultImage = "https://lh3.googleusercontent.com/aida-public/AB6AXuDku6_yc6XS7wRGeFOehQjXreqPp6RDW26XGHZCeYGHU6lOA-Qe7x-44_gjOwmv7kqjxxoFGIhyHiij86UZhUOFvkkaAzXaTUoo0iLgasFQlKeQxeigmfSoXAE600Jc-kYkOBuXxiGo3gACJka7febdLKrAAm-xny7GR8GZuYjFdPST9d174cf79_iIQzB2ZKNf7zgPT4m3_SASlGvWq686E-B0vPnwqkDi06wKtRXzDEMMQc1EqME5tmeKTz1I3UV4PaZey38tKLA";
   const placeholderKeywords = ["IA", "Modelo", "Documento", "Análisis", "Extracción"];
@@ -13,7 +23,15 @@ export default function KeywordPanel({ keywords }: KeywordPanelProps) {
       <h2 className="text-textPrimary text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
         Palabras Clave
       </h2>
-      {!hasKeywords && (
+      {/* Loading State */}
+      {isLoading && (
+        <div className="flex flex-col px-4 py-6">
+          <LoadingProgress stage={loadingStage} progress={progress} />
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && !hasKeywords && (
         <div className="flex flex-col px-4 py-6">
           <div className="flex flex-col items-center gap-6">
             <div
@@ -31,16 +49,25 @@ export default function KeywordPanel({ keywords }: KeywordPanelProps) {
           </div>
         </div>
       )}
-      <div className="flex gap-3 p-3 flex-wrap pr-4">
-        {items.map((tag) => (
-          <div
-            key={tag}
-            className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface1 pl-4 pr-4"
-          >
-            <p className="text-textPrimary text-sm font-medium leading-normal">{tag}</p>
-          </div>
-        ))}
-      </div>
+
+      {/* Keywords Display */}
+      {!isLoading && (
+        <div className="flex gap-3 p-3 flex-wrap pr-4">
+          {items.map((tag, index) => (
+            <div
+              key={`${tag}-${index}`}
+              className="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-surface1 pl-4 pr-4"
+            >
+              <p className="text-textPrimary text-sm font-medium leading-normal">{tag}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Keywords Skeleton while loading */}
+      {isLoading && loadingStage === 'analyzing' && (
+        <KeywordsSkeleton />
+      )}
     </aside>
   );
 }
