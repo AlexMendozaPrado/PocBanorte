@@ -3,8 +3,8 @@ import ThemeProvider from "./components/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "DocuMind - Análisis de Documentos PDF",
-  description: "Aplicación para analizar documentos PDF y extraer palabras clave usando IA",
+  title: "Banorte - Análisis de Documentos PDF",
+  description: "Aplicación de Banorte para analizar documentos PDF y extraer palabras clave usando IA",
 };
 
 export default function RootLayout({
