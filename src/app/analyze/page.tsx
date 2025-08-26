@@ -1,119 +1,38 @@
 "use client";
 
-import React, { useState } from "react";
-import { Box, Container, Typography, Button, Alert, Paper } from "@mui/material";
-import { CloudUpload } from "@mui/icons-material";
+import { useState } from "react";
+import Header from "@/components/Header";
+import UploadDropzone from "@/components/UploadDropzone";
+import KeywordPanel from "@/components/KeywordPanel";
 
 export default function AnalyzePage() {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [keywords, setKeywords] = useState<any[]>([]);
+  const [keywords, setKeywords] = useState<string[]>([]);
 
-  const handleFileUpload = async (file: File) => {
-    try {
-      setError(null);
-      setLoading(true);
-
-      // Prepare form data
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("mode", "generic");
-
-      // Call API
-      const response = await fetch("/api/analyze", {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Error analyzing document");
-      }
-
-      setKeywords(data.keywords || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error analyzing document");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+  const handleFileUpload = (file: File) => {
+    // simulate async extraction
+    setKeywords([]);
+    setTimeout(() => {
+      setKeywords(["IA", "Modelo", "Documento", "Análisis", "Extracción"]);
+    }, 800);
   };
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#121212", p: 4 }}>
-      <Container maxWidth="lg">
-        <Typography variant="h3" color="white" gutterBottom>
-          DocuMind - Análisis de Documentos
-        </Typography>
-
-        {/* Error Alert */}
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }} onClose={() => setError(null)}>
-            {error}
-          </Alert>
-        )}
-
-        {/* Upload Section */}
-        <Paper sx={{ p: 4, mb: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            Subir Documento PDF
-          </Typography>
-          <Box sx={{ textAlign: "center" }}>
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUpload />}
-              disabled={loading}
-              size="large"
-            >
-              {loading ? "Analizando..." : "Seleccionar PDF"}
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
-            </Button>
-          </Box>
-        </Paper>
-
-        {/* Keywords Section */}
-        <Paper sx={{ p: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            Palabras Clave Extraídas
-          </Typography>
-          {keywords.length === 0 ? (
-            <Typography color="text.secondary">
-              No hay palabras clave. Sube un PDF para comenzar el análisis.
-            </Typography>
-          ) : (
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {keywords.map((keyword, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    px: 2,
-                    py: 1,
-                    backgroundColor: "primary.main",
-                    color: "white",
-                    borderRadius: 1,
-                    fontSize: "0.875rem"
-                  }}
-                >
-                  {keyword.phrase} ({keyword.kind || "other"})
-                </Box>
-              ))}
-            </Box>
-          )}
-        </Paper>
-      </Container>
-    </Box>
+    <div className="min-h-screen flex flex-col bg-primary text-textPrimary">
+      <Header />
+      <div className="gap-1 px-6 flex flex-1 justify-center py-5 flex-col lg:flex-row">
+        <main className="flex flex-col max-w-[920px] flex-1">
+          <div className="flex flex-wrap justify-between gap-3 p-4">
+            <p className="text-[32px] font-bold leading-tight tracking-tight min-w-72">Analizar Documento</p>
+          </div>
+          <div className="flex flex-col p-4">
+            <UploadDropzone onFileUpload={handleFileUpload} />
+          </div>
+          <p className="text-textSecondary text-sm font-normal leading-normal pb-3 pt-1 px-4 text-center">
+            Formatos de archivo admitidos: PDF
+          </p>
+        </main>
+        <KeywordPanel keywords={keywords} />
+      </div>
+    </div>
   );
 }

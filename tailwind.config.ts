@@ -3,16 +3,16 @@ import forms from "@tailwindcss/forms";
 import containerQueries from "@tailwindcss/container-queries";
 
 const config: Config = {
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: ["./src/app/**/*.{ts,tsx}", "./src/components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        primary: "#1976d2",
-        surface1: "#121212",
-        surface2: "#1e1e1e",
-        textPrimary: "#ffffff",
-        textSecondary: "#b3b3b3",
-        borderDashed: "#ccc"
+        primary: "#181111",
+        surface1: "#382929",
+        surface2: "#533c3d",
+        textPrimary: "#FFFFFF",
+        textSecondary: "#b89d9f",
+        borderDashed: "#533c3d",
       },
       fontFamily: {
         sans: ["Spline Sans", "Noto Sans", "sans-serif"],
