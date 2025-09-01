@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { Box, Typography, Chip, Paper } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Paper, TextField } from "@mui/material";
 import { Search } from "@mui/icons-material";
 import { Keyword } from "@/core/domain/documents/Keyword";
 
@@ -9,27 +9,21 @@ interface KeywordsPaneProps {
   keywords: Keyword[];
 }
 
-const getChipColor = (kind?: string) => {
-  switch (kind) {
-    case "person":
-    case "party":
-      return "primary";
-    case "organization":
-      return "info";
-    case "date":
-      return "success";
-    case "amount":
-      return "error";
-    case "location":
-      return "warning";
-    case "topic":
-    case "other":
-    default:
-      return "default";
-  }
-};
-
 export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
+  const [formValues, setFormValues] = useState<Record<number, string>>({});
+
+  useEffect(() => {
+    const initialValues: Record<number, string> = {};
+    keywords.forEach((keyword, index) => {
+      initialValues[index] = keyword.phrase;
+    });
+    setFormValues(initialValues);
+  }, [keywords]);
+
+  const handleChange = (index: number, value: string) => {
+    setFormValues((prev) => ({ ...prev, [index]: value }));
+  };
+
   return (
     <Paper
       elevation={2}
@@ -96,23 +90,22 @@ export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
               </Typography>
             </Box>
             <Box
+              component="form"
               sx={{
                 display: "flex",
-                flexWrap: "wrap",
-                gap: 1
+                flexDirection: "column",
+                gap: 2
               }}
             >
               {keywords.map((keyword, index) => (
-                <Chip
+                <TextField
                   key={index}
-                  label={keyword.phrase}
-                  color={getChipColor(keyword.kind) as any}
-                  variant="filled"
-                  size="medium"
-                  sx={{
-                    fontSize: "0.875rem",
-                    fontWeight: 500
-                  }}
+                  placeholder={keyword.phrase}
+                  label={keyword.kind ?? `Keyword ${index + 1}`}
+                  value={formValues[index] ?? ""}
+                  onChange={(e) => handleChange(index, e.target.value)}
+                  fullWidth
+                  size="small"
                 />
               ))}
             </Box>
