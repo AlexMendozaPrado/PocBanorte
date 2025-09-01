@@ -1,2 +1,2 @@
-export { DocumentTextExtractorPort } from "./DocumentTextExtractorPort";
-export { KeywordExtractorPort } from "./KeywordExtractorPort";
+export type { DocumentTextExtractorPort } from "./DocumentTextExtractorPort";
+export type { KeywordExtractorPort } from "./KeywordExtractorPort";
