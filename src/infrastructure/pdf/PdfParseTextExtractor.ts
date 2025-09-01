@@ -1,4 +1,4 @@
-import { DocumentTextExtractorPort } from "../../core/domain/documents/ports/DocumentTextExtractorPort";
+import { DocumentTextExtractorPort } from "@/core/domain/documents/ports/DocumentTextExtractorPort";
 import pdfParse from "pdf-parse";
 
 export class PdfParseTextExtractor implements DocumentTextExtractorPort {

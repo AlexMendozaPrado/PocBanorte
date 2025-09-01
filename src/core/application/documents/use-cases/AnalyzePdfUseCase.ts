@@ -1,6 +1,6 @@
-import { DocumentTextExtractorPort } from "../../domain/documents/ports/DocumentTextExtractorPort";
-import { KeywordExtractorPort } from "../../domain/documents/ports/KeywordExtractorPort";
-import { Keyword } from "../../domain/documents/Keyword";
+import { DocumentTextExtractorPort } from "@/core/domain/documents/ports/DocumentTextExtractorPort";
+import { KeywordExtractorPort } from "@/core/domain/documents/ports/KeywordExtractorPort";
+import { Keyword } from "@/core/domain/documents/Keyword";
 
 export interface AnalyzePdfInput {
   bytes: Buffer;

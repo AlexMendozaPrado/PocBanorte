@@ -1,6 +1,6 @@
-import { KeywordExtractorPort } from "../../core/domain/documents/ports/KeywordExtractorPort";
-import { Keyword } from "../../core/domain/documents/Keyword";
-import { PromptBuilder } from "../../core/application/documents/services/PromptBuilder";
+import { KeywordExtractorPort } from "@/core/domain/documents/ports/KeywordExtractorPort";
+import { Keyword } from "@/core/domain/documents/Keyword";
+import { PromptBuilder } from "@/core/application/documents/services/PromptBuilder";
 import OpenAI from "openai";
 
 export class OpenAIKeywordExtractor implements KeywordExtractorPort {

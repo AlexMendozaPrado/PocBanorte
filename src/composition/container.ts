@@ -1,7 +1,7 @@
-import { AnalyzePdfUseCase } from "../core/application/documents/use-cases/AnalyzePdfUseCase";
-import { PdfParseTextExtractor } from "../infrastructure/pdf/PdfParseTextExtractor";
-import { OpenAIKeywordExtractor } from "../infrastructure/llm/OpenAIKeywordExtractor";
-import { getOpenAI, getOpenAIModel } from "../lib/env";
+import { AnalyzePdfUseCase } from "@/core/application/documents/use-cases/AnalyzePdfUseCase";
+import { PdfParseTextExtractor } from "@/infrastructure/pdf/PdfParseTextExtractor";
+import { OpenAIKeywordExtractor } from "@/infrastructure/llm/OpenAIKeywordExtractor";
+import { getOpenAI, getOpenAIModel } from "@/lib/env";
 
 export function makeAnalyzePdfUseCase(): AnalyzePdfUseCase {
   const openai = getOpenAI();
