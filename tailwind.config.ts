@@ -9,12 +9,28 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#181111",
-        surface1: "#382929",
-        surface2: "#533c3d",
-        textPrimary: "#FFFFFF",
-        textSecondary: "#b89d9f",
-        borderDashed: "#533c3d",
+        // Banorte Design System Colors
+        primary: "#EBF0F2",
+        surface1: "#FFFFFF",
+        surface2: "#F8F9FA",
+
+        // Text Colors (Banorte Official)
+        textPrimary: "#323E48",
+        textSecondary: "#5B6670",
+        textDisabled: "#7B868C",
+
+        // Interactive Elements
+        banorteRed: "#EB0029",
+        banorteRedHover: "#E30028",
+
+        // Feedback Colors
+        success: "#6CC04A",
+        warning: "#FFA400",
+        error: "#FF671B",
+
+        // Borders and Dividers
+        borderDashed: "#D1D5DB",
+        borderLight: "#E5E7EB",
       },
       fontFamily: {
         sans: ["Spline Sans", "Noto Sans", "sans-serif"],

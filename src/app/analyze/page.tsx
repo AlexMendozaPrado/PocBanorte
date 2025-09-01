@@ -3,12 +3,13 @@
 import React, { useState } from "react";
 import Header from "@/components/Header";
 import UploadDropzone from "@/components/UploadDropzone";
-import KeywordPanel from "@/components/KeywordPanel";
+import KeywordsPane from "./components/KeywordsPane";
 import SimplePDFViewer from "@/components/SimplePDFViewer";
 import { LoadingStage } from "@/components/LoadingStates";
+import { Keyword } from "@/core/domain/documents/Keyword";
 
 export default function AnalyzePage() {
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState<LoadingStage>('uploading');
   const [progress, setProgress] = useState(0);
@@ -64,18 +65,22 @@ export default function AnalyzePage() {
       setProgress(100);
       setLoadingStage('complete');
 
-      // Extract just the phrases from the keywords
-      const keywordPhrases = (data.keywords || []).map((kw: any) => kw.phrase || kw);
+      // Use the full Keyword objects from the service response
+      const keywordObjects = (data.keywords || []) as Keyword[];
 
       // Small delay to show completion
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      setKeywords(keywordPhrases);
+      setKeywords(keywordObjects);
       setIsLoading(false);
     } catch (err) {
       console.error("Error analyzing document:", err);
       // Fallback to demo keywords on error
-      setKeywords(["Error", "Análisis", "Fallido"]);
+      setKeywords([
+        { phrase: "Error", kind: "Estado" },
+        { phrase: "Análisis", kind: "Proceso" },
+        { phrase: "Fallido", kind: "Resultado" }
+      ]);
       setIsLoading(false);
 
       // Clean up URL on error
@@ -127,12 +132,33 @@ export default function AnalyzePage() {
         </main>
 
         {/* Right Column - Keywords Panel */}
-        <KeywordPanel
-          keywords={keywords}
-          isLoading={isLoading}
-          loadingStage={loadingStage}
-          progress={progress}
-        />
+        <div className="w-full lg:w-[360px]">
+          {isLoading ? (
+            <div className="p-4">
+              <h2 className="text-textPrimary text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3">
+                Palabras Clave
+              </h2>
+              <div className="flex flex-col py-6">
+                <div className="text-textSecondary text-sm">
+                  {loadingStage === 'uploading' && 'Subiendo archivo...'}
+                  {loadingStage === 'extracting' && 'Extrayendo texto...'}
+                  {loadingStage === 'analyzing' && 'Analizando con IA...'}
+                  {loadingStage === 'complete' && 'Completado'}
+                </div>
+                {progress && (
+                  <div className="w-full bg-surface1 rounded-full h-2 mt-2">
+                    <div
+                      className="bg-primary h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <KeywordsPane keywords={keywords} />
+          )}
+        </div>
       </div>
     </div>
   );

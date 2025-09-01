@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Box, Typography, Paper, TextField } from "@mui/material";
-import { Search } from "@mui/icons-material";
+import SearchIcon from "@mui/icons-material/Search";
 import { Keyword } from "@/core/domain/documents/Keyword";
 
 interface KeywordsPaneProps {
@@ -39,21 +39,20 @@ export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
         sx={{
           p: 3,
           borderBottom: 1,
-          borderColor: "divider",
-          backgroundColor: "#f8f9fa"
+          borderColor: "divider"
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}>
-          <Search sx={{ fontSize: 32, color: "primary.main" }} />
-          <Typography variant="h5" fontWeight="bold">
+          <SearchIcon sx={{ fontSize: 32, color: "primary.main" }} />
+          <Typography variant="h5" fontWeight="bold" color="text.primary">
             Palabras Clave
           </Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          Sube un documento para ver las palabras clave
+          Edita las palabras clave extraídas del documento
         </Typography>
         <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1 }}>
-          Las palabras clave se extraerán automáticamente utilizando un modelo de IA.
+          Los campos son editables para permitir ajustes manuales.
         </Typography>
       </Box>
 
@@ -71,7 +70,7 @@ export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
               gap: 2
             }}
           >
-            <Search sx={{ fontSize: 64, color: "text.disabled" }} />
+            <SearchIcon sx={{ fontSize: 64, color: "text.disabled" }} />
             <Typography variant="h6" color="text.secondary">
               No hay palabras clave
             </Typography>
@@ -81,12 +80,12 @@ export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
           </Box>
         ) : (
           <>
-            <Box sx={{ mb: 2 }}>
-              <Typography variant="h6" gutterBottom>
-                Análisis
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h6" gutterBottom color="text.primary">
+                Palabras Clave Extraídas
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Extracción
+                {keywords.length} palabra{keywords.length !== 1 ? 's' : ''} encontrada{keywords.length !== 1 ? 's' : ''}
               </Typography>
             </Box>
             <Box
@@ -100,12 +99,13 @@ export default function KeywordsPane({ keywords }: KeywordsPaneProps) {
               {keywords.map((keyword, index) => (
                 <TextField
                   key={index}
-                  placeholder={keyword.phrase}
-                  label={keyword.kind ?? `Keyword ${index + 1}`}
+                  label={keyword.kind ?? `Palabra Clave ${index + 1}`}
                   value={formValues[index] ?? ""}
                   onChange={(e) => handleChange(index, e.target.value)}
+                  placeholder={`Ingresa ${keyword.kind?.toLowerCase() ?? 'palabra clave'}...`}
                   fullWidth
                   size="small"
+                  variant="outlined"
                 />
               ))}
             </Box>
