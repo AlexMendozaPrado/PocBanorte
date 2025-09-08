@@ -1,13 +1,48 @@
+import Image from "next/image";
+
 interface BanorteLogoProps {
   className?: string;
   width?: number;
   height?: number;
   variant?: 'red' | 'white';
+  useImage?: boolean; // Nueva prop para alternar entre imagen y texto
 }
 
-export default function BanorteLogo({ className = "", width = 120, height = 32, variant = 'red' }: BanorteLogoProps) {
+export default function BanorteLogo({
+  className = "",
+  width = 120,
+  height = 32,
+  variant = 'red',
+  useImage = true // Por defecto usar imagen
+}: BanorteLogoProps) {
   const isWhite = variant === 'white';
 
+  // Si se usa imagen, renderizar componente Image de Next.js
+  if (useImage) {
+    return (
+      <div className={`flex items-center ${className}`} style={{ width, height }}>
+        <Image
+          src="/images/logos/logo.png"
+          alt="Banorte"
+          width={width}
+          height={height}
+          priority={true} // Cargar logo inmediatamente
+          className="object-contain"
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+            filter: isWhite ? 'brightness(0) invert(1)' : 'none', // Convertir a blanco si es necesario
+          }}
+          onError={(e) => {
+            // Fallback si la imagen no carga
+            console.warn('Logo image failed to load, falling back to text logo');
+          }}
+        />
+      </div>
+    );
+  }
+
+  // Fallback al logo de texto (implementación original)
   return (
     <div className={`flex items-center gap-3 ${className}`} style={{ width, height }}>
       {/* Símbolo simple */}

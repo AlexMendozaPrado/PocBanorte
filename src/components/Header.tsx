@@ -8,7 +8,12 @@ export default function Header() {
       style={{ backgroundColor: '#EB0029' }}
     >
       <div className="flex items-center gap-4 text-white">
-        <BanorteLogo variant="white" height={32} width={140} />
+        <BanorteLogo
+          variant="white"
+          height={32}
+          width={140}
+          useImage={true} // Habilitar logo de imagen
+        />
       </div>
       <div className="flex flex-1 justify-end gap-6">
         <nav className="flex items-center gap-8">
