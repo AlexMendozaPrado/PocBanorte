@@ -22,7 +22,7 @@ export default function BanorteLogo({
     return (
       <div className={`flex items-center ${className}`} style={{ width, height }}>
         <Image
-          src="/images/logos/logo.png"
+          src="/images/logos/LogotipoBanorteFinal.png"
           alt="Banorte"
           width={width}
           height={height}
