@@ -17,6 +17,15 @@ export class RecursiveTextChunker implements DocumentChunkerPort {
    * @returns Chunked text with metadata
    */
   async chunk(text: string, options?: ChunkOptions): Promise<ChunkResult> {
+    // Validate input text
+    if (!text || typeof text !== 'string') {
+      throw new Error(`Invalid text input for chunking. Received: ${typeof text}`);
+    }
+
+    if (text.trim().length === 0) {
+      throw new Error('Cannot chunk empty text');
+    }
+
     const chunkSize = options?.chunkSize || 1000;
     const chunkOverlap = options?.chunkOverlap || 200;
     const separators = options?.separator

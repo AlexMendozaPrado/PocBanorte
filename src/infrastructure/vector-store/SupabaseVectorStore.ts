@@ -43,7 +43,9 @@ export class SupabaseVectorStore implements VectorStorePort {
           id: crypto.randomUUID(),
           title: chunk.title,
           content: chunk.content,
-          embedding: chunk.embedding,
+          // Convert embedding array to pgvector string format: '[1,2,3]'
+          // Supabase JS client needs this format for vector columns
+          embedding: `[${chunk.embedding.join(",")}]` as any,
           chunk_index: chunk.chunkIndex,
           parent_document_id: chunk.parentDocumentId || null,
           metadata: chunk.metadata || {},
@@ -85,26 +87,62 @@ export class SupabaseVectorStore implements VectorStorePort {
     const startTime = Date.now();
 
     try {
+      console.log(`[SupabaseVectorStore] Searching with threshold: ${similarityThreshold}, maxResults: ${maxResults}`);
+      console.log(`[SupabaseVectorStore] Query embedding dimensions: ${queryEmbedding.length}`);
+
+      // Convert query embedding to pgvector string format
+      const queryEmbeddingStr = `[${queryEmbedding.join(",")}]`;
+
       // Call the match_documents RPC function
-      const { data, error } = await this.supabase.rpc("match_documents", {
-        query_embedding: queryEmbedding,
+      console.log(`[SupabaseVectorStore] Calling RPC with params:`, {
+        query_embedding_length: queryEmbeddingStr.length,
         match_threshold: similarityThreshold,
         match_count: maxResults,
+        first_chars: queryEmbeddingStr.substring(0, 50) + "..."
       });
+
+      // Log exact parameters being sent
+      const rpcParams = {
+        query_embedding: queryEmbeddingStr,
+        match_threshold: similarityThreshold,
+        match_count: maxResults,
+      };
+      console.log(`[SupabaseVectorStore] Exact RPC params:`, JSON.stringify(rpcParams).substring(0, 200));
+
+      const { data, error } = await this.supabase.rpc("match_documents", rpcParams);
 
       if (error) {
         console.error("Error searching similar documents:", error);
+        console.error("Error details:", JSON.stringify(error, null, 2));
         throw new Error(`Failed to search documents: ${error.message}`);
       }
 
       const results = (data || []) as SupabaseMatchResult[];
+      console.log(`[SupabaseVectorStore] Raw results from Supabase: ${results.length} documents`);
+      console.log(`[SupabaseVectorStore] Raw data type:`, typeof data);
+      console.log(`[SupabaseVectorStore] Raw data is array:`, Array.isArray(data));
+
+      // Debug: Log similarity scores of results
+      if (results.length > 0) {
+        console.log(`[SupabaseVectorStore] Top similarities: ${results.slice(0, 3).map(r => r.similarity.toFixed(3)).join(', ')}`);
+      } else {
+        console.warn(`[SupabaseVectorStore] No results found. This might indicate:`);
+        console.warn(`  - Threshold too high (current: ${similarityThreshold})`);
+        console.warn(`  - No documents in database`);
+        console.warn(`  - Embedding mismatch between query and stored documents`);
+      }
 
       // Apply parent document filter if specified
+      console.log(`[SupabaseVectorStore] Before parent filter: ${results.length} documents`);
+      console.log(`[SupabaseVectorStore] Parent document ID filter:`, options?.parentDocumentId);
+
       const filteredResults = options?.parentDocumentId
         ? results.filter(
             (doc) => doc.parent_document_id === options.parentDocumentId
           )
         : results;
+
+      console.log(`[SupabaseVectorStore] After parent filter: ${filteredResults.length} documents`);
 
       // Convert to domain entities
       const chunks = filteredResults.map((doc) => ({

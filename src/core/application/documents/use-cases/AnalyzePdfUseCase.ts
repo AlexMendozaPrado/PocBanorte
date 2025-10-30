@@ -10,6 +10,7 @@ export interface AnalyzePdfInput {
 
 export interface AnalyzePdfOutput {
   keywords: Keyword[];
+  fullText: string;
 }
 
 export class AnalyzePdfUseCase {
@@ -35,6 +36,6 @@ export class AnalyzePdfUseCase {
       }
     });
 
-    return { keywords };
+    return { keywords, fullText };
   }
 }

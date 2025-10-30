@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeAnalyzePdfUseCase } from "@/composition/container";
+import { makeStoreDocumentUseCase } from "@/composition/rag-container";
 import { getMaxUploadMB } from "@/lib/env";
 
 export const runtime = "nodejs";
@@ -45,10 +46,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log(`[API /analyze] Processing file: ${file.name} (${file.size} bytes)`);
+
     // Convert file to buffer
     const bytes = Buffer.from(await file.arrayBuffer());
 
-    // Execute use case
+    // Step 1: Analyze PDF (extract keywords)
     const useCase = makeAnalyzePdfUseCase();
     const result = await useCase.execute({
       bytes,
@@ -56,10 +59,44 @@ export async function POST(request: NextRequest) {
       mode: mode as "generic" | "legal" | "academic" | "finance"
     });
 
-    return NextResponse.json(result);
+    console.log(`[API /analyze] Analysis complete. Found ${result.keywords.length} keywords`);
+
+    // Step 2: Store document with embeddings for RAG
+    try {
+      const storeUseCase = makeStoreDocumentUseCase();
+
+      console.log("[API /analyze] Storing document with embeddings for RAG...");
+      const storeResult = await storeUseCase.execute({
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type,
+        fullText: result.fullText,
+        title: file.name,
+        metadata: {
+          uploadedAt: new Date().toISOString(),
+          mode,
+        },
+      });
+
+      console.log(
+        `[API /analyze] Document stored successfully with ${storeResult.stats.chunkCount} chunks (ID: ${storeResult.document.id})`
+      );
+
+      // Return analysis result with document ID for RAG queries
+      return NextResponse.json({
+        ...result,
+        documentId: storeResult.document.id,
+        chunkCount: storeResult.stats.chunkCount,
+      });
+    } catch (storeError) {
+      console.error("[API /analyze] Error storing document for RAG:", storeError);
+      // Continue without RAG storage - still return analysis
+      console.warn("[API /analyze] Continuing without RAG storage");
+      return NextResponse.json(result);
+    }
   } catch (error) {
-    console.error("Error analyzing PDF:", error);
-    
+    console.error("[API /analyze] Error analyzing PDF:", error);
+
     const errorMessage = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json(
       { error: errorMessage },
